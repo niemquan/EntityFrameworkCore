@@ -365,7 +365,7 @@ namespace Microsoft.EntityFrameworkCore.Query.Internal
                         queryModel.BodyClauses.Add(orderByClause = new OrderByClause());
                     }
 
-                    orderByClause.Orderings.Add(new Ordering(groupResultOperator.KeySelector, OrderingDirection.Asc));
+                    orderByClause.Orderings.Insert(0, new Ordering(groupResultOperator.KeySelector, OrderingDirection.Asc));
                 }
 
                 if (queryModel.BodyClauses
