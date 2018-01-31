@@ -4013,6 +4013,46 @@ namespace Microsoft.EntityFrameworkCore.Query
                 });
         }
 
+        [ConditionalFact]
+        public virtual void Include_with_group_by_and_last()
+        {
+            using (var ctx = CreateContext())
+            {
+                var actual = ctx.Gears.OrderByDescending(g => g.HasSoulPatch).Include(g => g.Weapons).Select(g => new { g.Rank, g }).GroupBy(g => g.Rank).ToList().OrderBy(g => g.Key).ToList();
+                var expected = Fixture.QueryAsserter.ExpectedData.Set<Gear>().OrderByDescending(g => g.HasSoulPatch).Include(g => g.Weapons).Select(g => new { g.Rank, g }).GroupBy(g => g.Rank).ToList().OrderBy(g => g.Key).ToList();
+
+                Assert.Equal(expected.Count, actual.Count);
+                
+                for (var i = 0; i < expected.Count; i++)
+                {
+                    Assert.Equal(expected[i].Key, actual[i].Key);
+                    var expectedInners = expected[i].ToList();
+                    var actualInners = actual[i].ToList();
+
+                    Assert.Equal(expectedInners.Count, actualInners.Count);
+                    for (var j = 0; j < expectedInners.Count; j++)
+                    {
+                        Assert.Equal(expectedInners[j].g.Rank, actualInners[j].g.Rank);
+
+                        var expectedWeapons = expectedInners[j].g.Weapons.ToList();
+                        var actualWeapons = actualInners[j].g.Weapons.ToList();
+
+                        Assert.Equal(expectedWeapons.Count, actualWeapons.Count);
+                        for (var k = 0; k < expectedWeapons.Count; k++)
+                        {
+                            Assert.Equal(expectedWeapons[k].Id, actualWeapons[k].Id);
+                            Assert.Equal(expectedWeapons[k].Name, actualWeapons[k].Name);
+                        }
+                    }
+                }
+            }
+
+                //AssertQuery<Gear>(
+                //    gs => gs.OrderByDescending(g => g.HasSoulPatch).Include(g => g.Weapons).Select(g => new { g.Rank, g }).GroupBy(g => g.Rank),
+                //    assertOrder: true,
+                //    elementAsserter: (e, a) => GroupingAsserter<MilitaryRank, Weapon>(ee => ee.Id, (ee, aa) => Assert.Equal(ee.Id, aa.Id))(e, a));
+        }
+
         protected GearsOfWarContext CreateContext() => Fixture.CreateContext();
 
         protected virtual void ClearLog()
