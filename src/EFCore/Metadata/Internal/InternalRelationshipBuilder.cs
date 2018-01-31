@@ -930,6 +930,11 @@ namespace Microsoft.EntityFrameworkCore.Metadata.Internal
 
                 newRelationshipBuilder.Metadata.SetIsOwnership(ownership, configurationSource);
 
+                foreach (var directlyDerivedType in newRelationshipBuilder.Metadata.DeclaringEntityType.GetDirectlyDerivedTypes().ToList())
+                {
+                    directlyDerivedType.Builder.HasBaseType((string)null, ConfigurationSource.Convention);
+                }
+
                 return batch.Run(newRelationshipBuilder);
             }
         }

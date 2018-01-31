@@ -215,10 +215,10 @@ builder.Entity(""Microsoft.EntityFrameworkCore.Migrations.ModelSnapshotSqlServer
         {
             Test(
                 builder =>
-                    {
-                        builder.Entity<EntityWithOneProperty>().HasAnnotation("AnnotationName", "AnnotationValue");
-                        builder.Ignore<EntityWithTwoProperties>();
-                    },
+                {
+                    builder.Entity<EntityWithOneProperty>().HasAnnotation("AnnotationName", "AnnotationValue");
+                    builder.Ignore<EntityWithTwoProperties>();
+                },
                 GetHeading() + @"
 builder.Entity(""Microsoft.EntityFrameworkCore.Migrations.ModelSnapshotSqlServerTest+EntityWithOneProperty"", b =>
     {
@@ -233,10 +233,10 @@ builder.Entity(""Microsoft.EntityFrameworkCore.Migrations.ModelSnapshotSqlServer
     });
 ",
                 o =>
-                    {
-                        Assert.Equal(2, o.GetEntityTypes().First().GetAnnotations().Count());
-                        Assert.Equal("AnnotationValue", o.GetEntityTypes().First()["AnnotationName"]);
-                    });
+                {
+                    Assert.Equal(2, o.GetEntityTypes().First().GetAnnotations().Count());
+                    Assert.Equal("AnnotationValue", o.GetEntityTypes().First()["AnnotationName"]);
+                });
         }
 
         [Fact]
